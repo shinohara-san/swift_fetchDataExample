@@ -8,7 +8,7 @@
 
 import Foundation
 
-class TestData {
+class TestData: Codable {
     var id: Int?
     var title: String?
     var body: String?
