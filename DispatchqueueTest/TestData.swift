@@ -8,7 +8,7 @@
 
 import Foundation
 
-class TestData: Decodable {
+class TestData {
     var id: Int?
     var title: String?
     var body: String?

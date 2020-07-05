@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Alamofire
+import SwiftyJSON
 
 class ViewController: UIViewController {
 
@@ -22,27 +24,27 @@ class ViewController: UIViewController {
     func getData(){
         let urlString = "https://jsonplaceholder.typicode.com/posts"
         guard let url = URL(string: urlString) else {return}
-       
-        let task = URLSession.shared.dataTask(with: url) { [weak self](data, response, error) in
-            if let error = error {
-                print(error)
-                return
+        
+        AF.request(url).responseJSON { [weak self](response) in
+            let data = JSON(response.value as Any)
+            let tempArray = data.arrayValue
+            
+            for element in tempArray{
+                let id = element["id"].intValue
+                let title = element["title"].stringValue
+                let body = element["body"].stringValue
+                let data = TestData(id: id, title: title, body: body)
+                self?.dataArray.append(data)
             }
-            
-            guard let data = data else {return}
-            let decoder = JSONDecoder()
-            let tempArray = try? decoder.decode([TestData].self, from: data)
-            guard let unwrappedArray = tempArray else {return}
-            
-            self?.dataArray = unwrappedArray
             
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
+                self?.view.backgroundColor = .systemBlue
             }
         }
-        task.resume()
-        
+
     }
+
 
 }
 
